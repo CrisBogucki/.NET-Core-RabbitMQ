@@ -15,7 +15,7 @@ namespace Producer
             using (var channel = connection.CreateModel())
             {
                 channel.QueueDeclare(
-                    queue: "hellow", 
+                    queue: "first", 
                     durable: false, 
                     exclusive: false, 
                     autoDelete: false,
@@ -24,11 +24,10 @@ namespace Producer
                 string msg = "Hellow World";
                 var body = Encoding.UTF8.GetBytes(msg);
 
-                channel.BasicPublish(
-                    exchange: "", 
-                    routingKey: "hellow", 
-                    basicProperties: null, 
-                    body: body);
+                channel.BasicPublish(exchange: "",
+                    routingKey: "first",
+                    basicProperties: null,
+                    body: body); 
                 
                 Console.WriteLine(" [x] Send {0}", msg);
             }
