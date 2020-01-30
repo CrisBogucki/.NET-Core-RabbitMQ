@@ -8,33 +8,37 @@ namespace Producer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World! I'm Procuder");
+            app();
+        }
 
-            var factory = new ConnectionFactory() {HostName = "localhost"};
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
+        private static void app()
+        {
+            var factory = new ConnectionFactory() { HostName = "localhost" };
+            using (var connection = factory.CreateConnection())
             {
-                channel.QueueDeclare(
-                    queue: "hellow", 
-                    durable: false, 
-                    exclusive: false, 
-                    autoDelete: false,
-                    arguments: null);
+                using (var channel = connection.CreateModel())
+                {
+                    channel.QueueDeclare(queue: "msgKey",
+                        durable: false,
+                        exclusive: false,
+                        autoDelete: false,
+                        arguments: null);
 
-                string msg = "Hellow World";
-                var body = Encoding.UTF8.GetBytes(msg);
-
-                channel.BasicPublish(
-                    exchange: "", 
-                    routingKey: "hellow", 
-                    basicProperties: null, 
-                    body: body);
-                
-                Console.WriteLine(" [x] Send {0}", msg);
+                    Console.Write("Enter message: ");
+                    string msg = Console.ReadLine();
+                    var msgBody = Encoding.UTF8.GetBytes(msg);
+                    channel.BasicPublish(exchange: "",
+                        routingKey: "msgKey",
+                        basicProperties: null,
+                        body: msgBody);
+                    Console.WriteLine($" [x] Send message: {msg}");
+                }
             }
             
-            Console.WriteLine("Press enter to exit");
-            Console.ReadKey();
+            Console.Write("Exit [T/N]");
+            var isEnd = Console.ReadLine();
+            if(!(isEnd != null && isEnd.ToLower() == "t")) 
+                app();
         }
     }
 }
